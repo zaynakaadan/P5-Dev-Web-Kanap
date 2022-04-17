@@ -77,7 +77,7 @@ console.log(productInLocalStorage);
 const fusionProduit = Object.assign({} , produit2Data ,{//ajouter le valeur avec un methode assign qui permet d'assigner quelque chose à un objet (qui existe déja) et de rajouter des valeurs des éléments dans cet objet dans ce tableau d'objets
 
 colors: `${productColors.value}`, //créé un nouvel objet pour ajouter ce qu'on veut comme valeur la color et quantite 
-quantite:`${productQuantity.value}`,
+quantite:Number(`${productQuantity.value}`),
 } );
 console.log(fusionProduit);
 if(productInLocalStorage== null){ //j'ai fait un condition si le productinlocalstorage est null le productinlocalstorage ça sera un tableau vide

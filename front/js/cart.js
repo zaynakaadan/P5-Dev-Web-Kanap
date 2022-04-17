@@ -11,6 +11,7 @@ for (let product in addProduit){
     document.querySelector("#cart__items").appendChild(productArticle);
     productArticle.className = "cart__item";
     productArticle.setAttribute("data-id",addProduit[product]._id);
+    productArticle.setAttribute("data-color",addProduit[product].colors);
     console.log(productArticle);
 
 // Insertion de l'élément "div"
@@ -96,31 +97,100 @@ productSupprimer.addEventListener("click", () => {
 }
     cartDisplay();
 
+
+
+
+
+
+
 function getTotals(){
-    let QuantityTotalcalcul =[];
     // Récupération du total des quantités
-    for ( i = 0; i < addProduit; ++i) {
-        totalQuantity += elemsQuantity[i].valueAsNumber;
-    }
-    let productTotalQuantity = document.getElementById('totalQuantity');
-    let elemsQuantity = document.getElementsByClassName('itemQuantity');
-    productTotalQuantity.innerHTML =  elemsQuantity[i].valueAsNumber;
-    QuantityTotalcalcul.push(totalQuantity)
+ const totalQuantity = addProduit.reduce((acc,addProduit) => acc + Number(addProduit.quantite) , 0)
+ let productTotalQuantity = document.getElementById('totalQuantity');
+ productTotalQuantity.textContent =  totalQuantity;
+// Récupération du prix total
+const totalPrice = addProduit.reduce((acc,addProduit) => acc + (addProduit.price*addProduit.quantite) , 0)
+let productTotalPrice = document.getElementById('totalPrice');
+productTotalPrice.innerHTML = totalPrice; 
+console.log('addProduit', addProduit)
+console.log('totalQuantity', totalQuantity)
+console.log('totalPrice', totalPrice)
 
-    console.log(QuantityTotalcalcul);
-
-    // Récupération du prix total
-    let prixTotalcalcul =[];
-    for ( i = 0; i < addProduit; ++i) {
-        totalPrice += elemsQuantity[i].valueAsNumber* addProduit[i].price;
-    }
-    let productTotalPrice = document.getElementById('totalPrice');
-    productTotalPrice.innerHTML = elemsQuantity[i].valueAsNumber * addProduit[i].price;
-    prixTotalcalcul.push(totalPrice)
-    console.log(totalPrice);
+        
 }
 getTotals();
 
+const plusQuantite = async (cartDisplay) => {
+    await cartDisplay;
+    console.log("fonction plus");
+    let plus = document.querySelectorAll(".cart__item" )
+    console.log(plus);
+    plus.forEach((positive) => {
+        
+        positive.addEventListener("click" , () => {
+            console.log(positive);
+
+            for(i=0; i< addProduit.length;i++){
+                if(addProduit[i]._id == positive.dataset.id && 
+                    addProduit[i].colors == positive.dataset.color){
+                    return addProduit[i].quantite++,
+                    
+                    localStorage.setItem("cartItems",JSON.stringify(addProduit)),
+                    (document.querySelectorAll("#totalQuantity")[i].textContent = addProduit[i].quantite),
+                    
+                    document.querySelectorAll("#totalPrice")[i].textContent = `${addProduit[i].quantite * addProduit[i].price}`,
+                    console.log("quantite++"),
+                    //Refresh rapide de la page
+            location.reload();
+                }
+            }
+        }
+        ) 
+    }
+    )
+}
+
+plusQuantite();
+
+
+
+
+
+
+
+/*function deleteItem(){
+    const buttonDelete = document.querySelector(".deleteItem")
+    buttonDelete.addEventListener("click" , () => {
+        console.log( " vous")
+    }
+    )
+}*/
+
+
+
+
+
+//----------------------supprimer un ITEM------------------------------
+/*function deleteItem() {
+    let buttonDelete = document.querySelectorAll(".deleteItem");
+  
+    for (let j = 0; j < buttonDelete.length; j++){
+        buttonDelete[j].addEventListener("click" , (e) => {
+            e.preventDefault();
+  
+            // Select pour supprimer Item by Id & Color
+            let idDelete = addProduit[j].idProduit;
+            let colorDelete = addProduit[j].couleurProduit;
+  
+            addProduit = addProduit.filter( el => el.idProduit !== idDelete || el.couleurProduit !== colorDelete );
+            localStorage.setItem("cartItems", JSON.stringify(addProduit));
+            
+            alert("Ce produit a bien été supprimé du panier");
+           location.reload();
+        })
+    }
+  }
+  deleteItem();*/
 
 
 
@@ -130,8 +200,6 @@ getTotals();
 
 
 
-
-               
 
 
 
