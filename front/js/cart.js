@@ -119,7 +119,7 @@ console.log('totalPrice', totalPrice)
         
 }
 getTotals();
-
+// ajout un plus de la quantité depuis la page panier
 const plusQuantite = async (cartDisplay) => {
     await cartDisplay;
     console.log("fonction plus");
@@ -136,9 +136,7 @@ const plusQuantite = async (cartDisplay) => {
                     return addProduit[i].quantite++,
                     
                     localStorage.setItem("cartItems",JSON.stringify(addProduit)),
-                    (document.querySelectorAll("#totalQuantity")[i].textContent = addProduit[i].quantite),
                     
-                    document.querySelectorAll("#totalPrice")[i].textContent = `${addProduit[i].quantite * addProduit[i].price}`,
                     console.log("quantite++"),
                     //Refresh rapide de la page
             location.reload();
@@ -158,39 +156,10 @@ plusQuantite();
 
 
 
-/*function deleteItem(){
-    const buttonDelete = document.querySelector(".deleteItem")
-    buttonDelete.addEventListener("click" , () => {
-        console.log( " vous")
-    }
-    )
-}*/
 
 
 
 
-
-//----------------------supprimer un ITEM------------------------------
-/*function deleteItem() {
-    let buttonDelete = document.querySelectorAll(".deleteItem");
-  
-    for (let j = 0; j < buttonDelete.length; j++){
-        buttonDelete[j].addEventListener("click" , (e) => {
-            e.preventDefault();
-  
-            // Select pour supprimer Item by Id & Color
-            let idDelete = addProduit[j].idProduit;
-            let colorDelete = addProduit[j].couleurProduit;
-  
-            addProduit = addProduit.filter( el => el.idProduit !== idDelete || el.couleurProduit !== colorDelete );
-            localStorage.setItem("cartItems", JSON.stringify(addProduit));
-            
-            alert("Ce produit a bien été supprimé du panier");
-           location.reload();
-        })
-    }
-  }
-  deleteItem();*/
 
 
 
