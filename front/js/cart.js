@@ -125,85 +125,33 @@ console.log('totalPrice', totalPrice)
 getTotals();
 
 // ajoute un plus de la quantité depuis la page panier
-const plusQuantite = async (cartDisplay) => {
+const updateQuantity = async (cartDisplay) => {
     await cartDisplay;
     console.log("fonction plus");
-    let plus = document.querySelectorAll(".itemQuantity") 
-    console.log(plus);
-    plus.forEach((positive) => {
-        
-        positive.addEventListener("click" , () =>  {
-            console.log(positive);
+    let quantityField = document.querySelectorAll(".itemQuantity"); //**** je sélectionne les inputs de quantité*****
+    
+    for(let q=0; q< quantityField.length;q++){//**** pour chaque input de quantité on vérifie s'il y a un changement de valeur ***/
+        quantityField[q].addEventListener("input" , (event) =>  {
+        event.preventDefault();
 
-            for(i=0; i< addProduit.length;i++){
-                if(addProduit[i]._id == positive.dataset.id && 
-                    addProduit[i].colors == positive.dataset.color){
-                    return addProduit[i].quantite++,
+        let quantityArticles = quantityField[q].value; //***Attibution de la valeur de l'input dans "quantityArticles" ***/
+        addProduit[q].quantite = quantityArticles ;//****Mise àjour de la quantité dans le cart.quantityproduct  ***/
+        localStorage.setItem("cartItems",JSON.stringify(addProduit));
                     
-                    localStorage.setItem("cartItems",JSON.stringify(addProduit)),
-                    
-                    console.log("quantite++"),
-                    //Refresh rapide de la page
-            location.reload();
-                }
-            }
+            console.log("quantite++");
+        //Refresh rapide de la page
+       location.reload();
+                
+                });
+                
         }
-        ) 
-    }
-    )
-}
+  }
 
-plusQuantite();
+ 
+updateQuantity();
 
 
 
-const minQuantite = async (cartDisplay) => {
-  await cartDisplay;
-  let moins = document.querySelectorAll(".itemQuantity");
-  moins.forEach((negative) => {
-    negative.addEventListener("click" , ()  => {
-      console.log(negative);
-
-
-    let totalAddProduit = addProduit.length;
-    for(i=0 ; i<totalAddProduit; i++){
-    console.log(totalAddProduit);
-   
-    if(addProduit[i].quantite == 1 && totalAddProduit == 1){
-        return (
-         localStorage.removeItem('cartItems'),
-        (location.href = "cart.html") ,
-        console.log("remove moins tout")
-        );   
-    }
-    if(addProduit[i].quantite == 1 && totalAddProduit != 1 &&      //un condition pour 1 produit et plusieur produits
-        addProduit[i]._id == negative.dataset.id && addProduit[i].colors == negative.dataset.color ){///il y a plusieur produits dans le tableau mais il y en a un qui a une 1 quantité il faut suprimer cette produit la
-        addProduit.splice(i,1)    //pour supprimer un 1 élément à cet index
-        
-        localStorage.setItem('cartItems', JSON.stringify(addProduit));
-//Refresh rapide de la page
-       // location.href = "cart.html";
-        console.log("moins un produit dans le panier ");
-    }
-    if(
-        addProduit[i].quantite != 1 && totalAddProduit != 1 &&
-        addProduit[i]._id == negative.dataset.id && addProduit[i].colors == negative.dataset.color){
-
-        return (
-            addProduit[i].quantite--,
-            localStorage.setItem("cartItems",JSON.stringify(addProduit),
-            
-            console.log("quantite--"))
-            );
-    }
-}
-
-      
-    })  
-    })
-};
-
-minQuantite();
 
 
 const removeProduct = async (cartDisplay) => {
@@ -219,10 +167,11 @@ let totalAddProduitRemove = addProduit.length;
 console.log(totalAddProduitRemove);
 alert("Votre article est bien supprimé")
 if(totalAddProduitRemove ==1) {//si il y a 1 produit
-    return (localStorage.removeItem('cartItems'),
+    return (localStorage.removeItem('cartItems')),
+   
+   window.location.href = "cart.html";
+    //console.log("remove tout le panier")
     
-    console.log("remove tout le panier")
-    )
 }
 else {
 someProduct = addProduit.filter(el => {
@@ -392,8 +341,9 @@ fetch("http://localhost:3000/api/products/order", options)
         .then(data => {
         localStorage.setItem('orderId', data.orderId);
        document.location.href = 'confirmation.html?id='+ data.orderId;
-      }).catch(error=>console.log(error))
-      return true;
+       alert("Merci pour votre commande");
+      })
+        return true;
      //********Sinon demande de vérifier le formulaire pour y corriger les fautes********
     } else {
         alert("Le formulaire n'est pas valide");
