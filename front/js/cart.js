@@ -247,7 +247,7 @@ return;
 
 removeProduct();
 
-//Instauration formulaire avec regex
+//**********Instauration formulaire avec regex**********
 function getForm() {
     
  let form = document.querySelector(".cart__order__form");
@@ -277,17 +277,9 @@ form.city.addEventListener('change', function() {
 form.email.addEventListener('change', function() {
     validEmail(this);
 });
-//Ecouter la soumission du formulaire
-const orderInput = document.querySelector("#order");
-orderInput.addEventListener("click", function (e)  {
-    e.preventDefault();
-    if ( validFirstName(form.firstName) && validLastName(form.lastName)  && validAddress(form.address) &&validCity(form.city) && validEmail (form.email) ) {
-       // orderInput.click();////il y a une quastion
-       
-       console.log('why');
-    } 
+
     
-    });
+    
     
 // ********* Validation du prénom **********
 const validFirstName = function(inputFirstName) {
@@ -354,16 +346,12 @@ const validEmail = function(inputEmail) {
        return false;
     }
 };
-}
 
-    getForm();
-
-    function postForm() {
-        const order = document.getElementById('order');
-        order.addEventListener('click', (event) => {
-        event.preventDefault();
-      
-        // je récupère les données du formulaire dans un objet
+          
+ //************Au clic du bouton "commander", enregistre les informations du formulaire, tout en testant si les données sont correctes*********
+        document.getElementById("order").addEventListener('click', (e) => {
+            e.preventDefault()
+        
         const contact = {
           firstName : document.getElementById('firstName').value,
           lastName : document.getElementById('lastName').value,
@@ -397,18 +385,30 @@ const validEmail = function(inputEmail) {
       };
 console.log(options);
 
+//***********Vérifie que toutes les données du formulaire sont correctes et si oui confirme la commande**********
+if (validFirstName(form.firstName) && validLastName(form.lastName) && validAddress(form.address) && validCity(form.city) && validEmail(form.email)) {
 fetch("http://localhost:3000/api/products/order", options)
         .then(response => response.json())
         .then(data => {
         localStorage.setItem('orderId', data.orderId);
-        document.location.href = 'confirmation.html?id='+ data.orderId;
-      })
-     
+       document.location.href = 'confirmation.html?id='+ data.orderId;
+      }).catch(error=>console.log(error))
+      return true;
+     //********Sinon demande de vérifier le formulaire pour y corriger les fautes********
+    } else {
+        alert("Le formulaire n'est pas valide");
+        
+        console.log();
+      };
 
-    }); // fin eventListener postForm
-} // fin envoi du formulaire postForm
-postForm();
+   
+}) 
+       
+}
 
+
+
+getForm();
 
 
 
