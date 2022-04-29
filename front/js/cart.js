@@ -3,7 +3,6 @@ let someProduct = [];
 
 let addProduit = JSON.parse(localStorage.getItem('cartItems'));
 
-console.log(addProduit);
 const cartDisplay = async () => {   //--j'ai construire mon fonction qui vas tout le code à l'intérieur*/
    //----------------Affichage des éléments dans le code HTML-----------------
    
@@ -108,19 +107,25 @@ productSupprimer.addEventListener("click", () => {
 
 
 function getTotals(){
-    // Récupération du total des quantités
- const totalQuantity = addProduit.reduce((acc,addProduit) => acc + Number(addProduit.quantite) , 0)
- let productTotalQuantity = document.getElementById('totalQuantity');
- productTotalQuantity.textContent =  totalQuantity;
-// Récupération du prix total
-const totalPrice = addProduit.reduce((acc,addProduit) => acc + (addProduit.price*addProduit.quantite) , 0)
+  // Récupération du total des quantités  et du prix total
+let productTotalQuantity = document.getElementById('totalQuantity');
 let productTotalPrice = document.getElementById('totalPrice');
+if(addProduit && addProduit.length)
+{
+const totalQuantity = addProduit.reduce((acc,addProduit) => acc + Number(addProduit.quantite) , 0)
+productTotalQuantity.textContent =  totalQuantity;
+
+const totalPrice = addProduit.reduce((acc,addProduit) => acc + (addProduit.price*addProduit.quantite) , 0)
 productTotalPrice.innerHTML = totalPrice; 
+
 console.log('addProduit', addProduit)
 console.log('totalQuantity', totalQuantity)
 console.log('totalPrice', totalPrice)
 
-        
+}else{
+    productTotalQuantity.textContent =  0;
+    productTotalPrice.innerHTML =0;
+}      
 }
 getTotals();
 
@@ -140,14 +145,14 @@ const updateQuantity = async (cartDisplay) => {
                     
             console.log("quantite++");
         //Refresh rapide de la page
-       location.reload();
+      location.reload();
                 
                 });
                 
         }
   }
 
- 
+  
 updateQuantity();
 
 
@@ -168,9 +173,9 @@ console.log(totalAddProduitRemove);
 alert("Votre article est bien supprimé")
 if(totalAddProduitRemove ==1) {//si il y a 1 produit
     return (localStorage.removeItem('cartItems')),
-   
+    //console.log("remove tout le panier");
    window.location.href = "cart.html";
-    //console.log("remove tout le panier")
+   
     
 }
 else {
@@ -190,9 +195,11 @@ someProduct = addProduit.filter(el => {
     
 }
     });
+    
 });
 return;
 };
+
 
 removeProduct();
 
@@ -204,7 +211,7 @@ function getForm() {
 //Création des expressions régulières
 let addressRegExp = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
 let charRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
-let emailRegExp = new RegExp("^[a-zA-Z0-9-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$","g");
+let emailRegExp = new RegExp("^[a-zA-Z0-9-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$");
 
 // Ecouter de la modification du prénom
 form.firstName.addEventListener('change', function() {
@@ -293,7 +300,9 @@ const validEmail = function(inputEmail) {
     } else {
         emailErrorMsg.innerHTML = 'Veuillez renseigner votre email.';
        return false;
+       
     }
+   
 };
 
           
@@ -339,16 +348,19 @@ if (validFirstName(form.firstName) && validLastName(form.lastName) && validAddre
 fetch("http://localhost:3000/api/products/order", options)
         .then(response => response.json())
         .then(data => {
+            alert("Merci pour votre commande");
         localStorage.setItem('orderId', data.orderId);
        document.location.href = 'confirmation.html?id='+ data.orderId;
-       alert("Merci pour votre commande");
+      
+       
       })
         return true;
      //********Sinon demande de vérifier le formulaire pour y corriger les fautes********
     } else {
         alert("Le formulaire n'est pas valide");
-        
+        return false,
         console.log();
+        
       };
 
    
