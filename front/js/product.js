@@ -62,20 +62,36 @@ produit2Display();
 const addBasket = () => {//appeler le fonction
 let bouton = document.getElementById("addToCart"); //j'ai fait variable bouton qui contein l 'id du produit
 console.log(bouton);
+
 bouton.addEventListener("click" , () => {
 //ajouter l'élément dans le LocalStorage
  let productInLocalStorage = JSON.parse(localStorage.getItem('cartItems'));//j'ai vérifié s'il y a quelque chose dans le local storage
 let productColors = document.getElementById("colors"); //j'ai récupéré les colors
 let productQuantity = document.getElementById("quantity"); //j'ai récupéré les quantity
 
+if (!productColors.value) {
+  alert('Merci de sélectionner une couleur.')
+  return
+}
+
+
+if (isNaN(productQuantity.value) || !(productQuantity.value > 0 && productQuantity.value < 101)) {
+  alert('Merci de sélectionner une quantité correcte.')
+  return
+}
+
+
 console.log(productColors.value);
 console.log(productQuantity.value);
+
+
 
 const fusionProduit = Object.assign({} , produit2Data ,{//ajouter le valeur avec un methode assign qui permet d'assigner quelque chose à un objet (qui existe déja) et de rajouter des valeurs des éléments dans cet objet dans ce tableau d'objets
 colors: `${productColors.value}`, //créé un nouvel objet pour ajouter ce qu'on veut comme valeur la color et quantite 
 quantite:Number(`${productQuantity.value}`),
 } );
 console.log(fusionProduit);
+
 if(productInLocalStorage== null){ //j'ai fait un condition si le productinlocalstorage est null le productinlocalstorage ça sera un tableau vide
  // si le panier est vide on crée l'élément avec son id et sa couleur et sa quantité
   productInLocalStorage = [];
@@ -83,7 +99,9 @@ if(productInLocalStorage== null){ //j'ai fait un condition si le productinlocals
   productInLocalStorage.push(fusionProduit);
    
   console.log(productInLocalStorage);// on vas le trouver dans un tableau
-  alert ("L'article a bien été ajouté à votre panier")
+  
+    
+ 
   localStorage.setItem('cartItems',JSON.stringify(productInLocalStorage));//pour faire un cartitems dans local storage et avec methode stringify il vas transormer le produitinlocalstorage en string pour le stocker dans mon local storage
   productInLocalStorage = JSON.parse(localStorage.getItem("cartItems"));
   
@@ -100,8 +118,8 @@ if(productInLocalStorage== null){ //j'ai fait un condition si le productinlocals
       return (
         productInLocalStorage[i].quantite++,
         console.log("quantite++"),
-        localStorage.setItem("produit", JSON.stringify(productInLocalStorage)),
-        alert ("L'article a bien été ajouté à votre panier"),
+        localStorage.setItem("cartItems", JSON.stringify(productInLocalStorage)),
+        alert ("L'article(s) a bien été ajouté à votre panier"),
         productInLocalStorage = JSON.parse(localStorage.getItem("cartItems"))
         
       );
@@ -119,12 +137,13 @@ for(i=0; i < productInLocalStorage.length; i++){
       console.log("new"),
       productInLocalStorage.push(fusionProduit),//pousser un nouvel objet qui jel'ai crée 
       localStorage.setItem('cartItems',JSON.stringify(productInLocalStorage)),
-    alert ("L'article a bien été ajouté à votre panier"),
+   alert ("L'article(s) a bien été ajouté à votre panier"),
       
       productInLocalStorage= JSON.parse(localStorage.getItem("cartItems"))
       
       )
     }
+    
   }
 }
  
