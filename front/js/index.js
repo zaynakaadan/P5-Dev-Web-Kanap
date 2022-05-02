@@ -1,4 +1,4 @@
-// appeler à l'api products avec la méthode fetch
+// Appeler à l'api products avec la méthode fetch
 fetch('http://localhost:3000/api/products')
     .then(function(res){
         if(res.ok){
@@ -27,7 +27,7 @@ fetch('http://localhost:3000/api/products')
         article.appendChild(img);//---- j'assigne l'enfant a son parent (productImg (enfant) , article(parent))----
         article.appendChild(h3);//---- le nom du produit est l'enfant , l'article est le parent-----
         article.appendChild(p);//---- la description du produit est l'enfant , l'article est le parent----
-        a.setAttribute ('href', productUrl);
+        a.setAttribute ('href', productUrl);//---- attribue un lien a la balise "a"----
 
         a= product._id;
         img.src= product.imageUrl;//------ ajoute le lien de l'image source----
