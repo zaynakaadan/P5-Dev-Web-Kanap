@@ -1,11 +1,13 @@
-//récupère la barre d'adresse sur la fenêtre----
-const produit = window.location.search.split("id=").join("");
+//Récupère la barre d'adresse sur la fenêtre----
+/*const produit = window.location.search.split("id=").join("");
 const produit2 = produit.replace("?", "");
 console.log(produit);
 console.log(produit2);
 
-let produit2Data= [];
-
+let produit2Data= [];*/
+let produit = new URL(document.location).searchParams;
+let produit2 = produit.get("id");
+console.log(produit2);
 
 const fetchproduit = async() => {
    await fetch(`http://localhost:3000/api/products/${produit2}`)

@@ -129,7 +129,7 @@ console.log('totalPrice', totalPrice)
 }
 getTotals();
 
-// ajoute un plus de la quantité depuis la page panier
+// Ajoute un plus de la quantité depuis la page panier
 const updateQuantity = async (cartDisplay) => {
     await cartDisplay;
     console.log("fonction plus");
@@ -138,12 +138,16 @@ const updateQuantity = async (cartDisplay) => {
     for(let q=0; q< quantityField.length;q++){//**** pour chaque input de quantité on vérifie s'il y a un changement de valeur ***/
         quantityField[q].addEventListener("input" , (event) =>  {
         event.preventDefault();
-
+        if (event.target.value > 100) event.target.value = 100//****Une conditin si le quantité plus de 100 alors le quantité =100 *****/
+        if (event.target.value < 0) event.target.value = 0//****Une conditin si le quantité moins de 0 alors le quantité = 0 *****/
+        
+    
         let quantityArticles = quantityField[q].value; //***Attibution de la valeur de l'input dans "quantityArticles" ***/
         sectionCarts[q].quantite = quantityArticles ;//****Mise àjour de la quantité dans le cart.quantityproduct  ***/
+        
         localStorage.setItem("cartItems",JSON.stringify(sectionCarts));
-                    
-            console.log("quantite++");
+        
+       console.log("quantite++");
         //Refresh rapide de la page
       location.reload();
                 
