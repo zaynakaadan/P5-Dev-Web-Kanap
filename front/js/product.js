@@ -1,65 +1,51 @@
 //Récupère la barre d'adresse sur la fenêtre----
-/*const produit = window.location.search.split("id=").join("");
-const produit2 = produit.replace("?", "");
-console.log(produit);
-console.log(produit2);
-
-let produit2Data= [];*/
-let produit = new URL(document.location).searchParams;
-let produit2 = produit.get("id");
-console.log(produit2);
-
-const fetchproduit = async () => {
-    await fetch(`http://localhost:3000/api/products/${produit2}`)
+const productId  = new URL(document.location).searchParams.get("id");
+console.log(productId);
+let product= [];
+const fetchproduct = async () => {
+    await fetch(`http://localhost:3000/api/products/${productId}`)
         .then((res) => res.json())
         .then((promiseData) => {
 
-            produit2Data = promiseData
-            console.log(produit2Data);
-
+            product = promiseData
+            console.log(product);
         });
-
 };
-
-//afficher nos produits---
-const produit2Display = async () => {
-    await fetchproduit();
+//Afficher nos produits---
+const displayProduct = async () => {
+    await fetchproduct();
 
     //pour démarrer le code ici---
     // Insertion de l'image
     let productImg = document.createElement("img");
     document.querySelector(".item__img").appendChild(productImg);
-    productImg.src = produit2Data.imageUrl;
-    productImg.alt = produit2Data.altTxt;
-
+    productImg.src = product.imageUrl;
+    productImg.alt = product.altTxt;
 
     // Inseration du titre 
     let productName = document.querySelector('#title');
-    productName.innerHTML = produit2Data.name;
+    productName.innerHTML = product.name;
 
     // Inseration du prix
     let productPrice = document.querySelector('#price');
-    productPrice.innerHTML = produit2Data.price;
-
+    productPrice.innerHTML = product.price;
 
     // Inseration de la description
     let productDescription = document.querySelector('#description');
-    productDescription.innerHTML = produit2Data.description;
-
+    productDescription.innerHTML = product.description;
 
     // La variable productColors insere les options de couleurs dans le HTML (DOM)--
-    produit2Data.colors.forEach((color) => { //j'ai fait une boucle dans cette tableau avec la méthode forEach--
+    product.colors.forEach((color) => { //j'ai fait une boucle dans cette tableau avec la méthode forEach--
             let productColors = document.createElement("option"); // j'ai fait un variable productcolors et dedans j'ai créé un élément option
             document.getElementById("colors").appendChild(productColors); //productcolors est l'enfant du colors
             console.log(productColors);
             productColors.value = `${color}`;
             productColors.innerHTML = `${color}`; //injecter un Html
         }
-
     )
-    addBasket(produit2Data);
+    addBasket(product);
 };
-produit2Display();
+displayProduct();
 
 const addBasket = () => { //Appeler le fonction
     let bouton = document.getElementById("addToCart"); //j'ai fait variable bouton qui contein l 'id du produit
@@ -75,45 +61,35 @@ const addBasket = () => { //Appeler le fonction
             alert('Merci de sélectionner une couleur.')
             return
         }
-
-
         if (isNaN(productQuantity.value) || !(productQuantity.value > 0 && productQuantity.value < 101)) {
             alert('Merci de sélectionner une quantité correcte.')
             return
         }
-
-
         console.log(productColors.value);
         console.log(productQuantity.value);
-        console.log(productInLocalStorage);
-
-
-        const fusionProduit = Object.assign({}, produit2Data, { //ajouter le valeur avec un methode assign qui permet d'assigner quelque chose à un objet (qui existe déja) et de rajouter des valeurs des éléments dans cet objet dans ce tableau d'objets
+        
+        const productWithColorsAndQuantity = Object.assign({}, product, { //ajouter le valeur avec un methode assign qui permet d'assigner quelque chose à un objet (qui existe déja) et de rajouter des valeurs des éléments dans cet objet dans ce tableau d'objets
             colors: `${productColors.value}`, //créé un nouvel objet pour ajouter ce qu'on veut comme valeur la color et quantite 
             quantite: Number(`${productQuantity.value}`),
         });
-        console.log(fusionProduit);
+        console.log(productWithColorsAndQuantity);
 
         if (productInLocalStorage == null) { //j'ai fait un condition si le productinlocalstorage est null le productinlocalstorage ça sera un tableau vide
-
             productInLocalStorage = [];
-
-            productInLocalStorage.push(fusionProduit);
+            alert("L'article(s) a bien été ajouté à votre panier"),
+            productInLocalStorage.push(productWithColorsAndQuantity);
 
             console.log(productInLocalStorage); // on vas le trouver dans un tableau
 
             localStorage.setItem('cartItems', JSON.stringify(productInLocalStorage)); //pour faire un cartitems dans local storage et avec methode stringify il vas transormer le produitinlocalstorage en string pour le stocker dans mon local storage
             productInLocalStorage = JSON.parse(localStorage.getItem("cartItems"));
 
-
         } else if (productInLocalStorage != null) {
-
             for (i = 0; i < productInLocalStorage.length; i++) {
                 console.log("test");
-
                 if (
-                    productInLocalStorage[i]._id == produit2Data._id && //la meme id 
-                    productInLocalStorage[i].colors == produit2Data.value
+                    productInLocalStorage[i]._id == product._id && //la meme id 
+                    productInLocalStorage[i].colors == product.value
                 ) {
                     return (
                         productInLocalStorage[i].quantite++,
@@ -121,40 +97,27 @@ const addBasket = () => { //Appeler le fonction
                         localStorage.setItem("cartItems", JSON.stringify(productInLocalStorage)),
                         alert("L'article(s) a bien été ajouté à votre panier"),
                         productInLocalStorage = JSON.parse(localStorage.getItem("cartItems"))
-
                     );
                 }
-
             }
-
             for (i = 0; i < productInLocalStorage.length; i++) {
                 if (
-                    productInLocalStorage[i]._id == produit2Data._id &&
-                    productInLocalStorage[i].colors != produit2Data.value ||
-                    productInLocalStorage[i]._id != produit2Data._id //nouveu id
+                    productInLocalStorage[i]._id == product._id &&
+                    productInLocalStorage[i].colors != product.value ||
+                    productInLocalStorage[i]._id != product._id //nouveu id
                 ) {
                     return (
                         console.log("new"),
-                        productInLocalStorage.push(fusionProduit), //pousser un nouvel objet qui jel'ai crée 
+                        productInLocalStorage.push(productWithColorsAndQuantity), //pousser un nouvel objet qui jel'ai crée 
                         localStorage.setItem('cartItems', JSON.stringify(productInLocalStorage)),
                         alert("L'article(s) a bien été ajouté à votre panier"),
 
                         productInLocalStorage = JSON.parse(localStorage.getItem("cartItems"))
-
                     )
                 }
-
             }
         }
-
-
     });
-
-
-
-
     return (productInLocalStorage = JSON.parse(localStorage.getItem("cartItems"))
-
-
     );
 };

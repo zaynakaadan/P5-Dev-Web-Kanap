@@ -1,8 +1,6 @@
 // ------Récupération des donées du local storage------
-let someProduct = [];
-
+let someProducts = [];
 let sectionCarts = JSON.parse(localStorage.getItem('cartItems'));
-
 const cartDisplay = async () => { //--j'ai construire mon fonction qui vas tout le code à l'intérieur*/
     //----------------Affichage des éléments dans le code HTML-----------------
 
@@ -20,7 +18,6 @@ const cartDisplay = async () => { //--j'ai construire mon fonction qui vas tout 
         productArticle.appendChild(productDivImg);
         productDivImg.className = "cart__item__img";
 
-
         // Insertion de l'image
         let productImg = document.createElement("img");
         productDivImg.appendChild(productImg);
@@ -31,7 +28,6 @@ const cartDisplay = async () => { //--j'ai construire mon fonction qui vas tout 
         let productItemContent = document.createElement("div");
         productArticle.appendChild(productItemContent);
         productItemContent.className = "cart__item__content";
-
 
         // Insertion de l'élément "div"
         let productItemContentTitlePrice = document.createElement("div");
@@ -82,12 +78,10 @@ const cartDisplay = async () => { //--j'ai construire mon fonction qui vas tout 
         productQuantity.setAttribute("data-id", sectionCarts[product]._id);
         productQuantity.setAttribute("data-color", sectionCarts[product].colors);
 
-
         // Insertion de l'élément "div"
         let productItemContentSettingsDelete = document.createElement("div");
         productItemContentSettings.appendChild(productItemContentSettingsDelete);
         productItemContentSettingsDelete.className = "cart__item__content__settings__delete";
-
 
         // Insertion de "p" supprimer
         let productSupprimer = document.createElement("p");
@@ -97,19 +91,18 @@ const cartDisplay = async () => { //--j'ai construire mon fonction qui vas tout 
         productSupprimer.setAttribute("data-id", sectionCarts[product]._id);
         productSupprimer.setAttribute("data-color", sectionCarts[product].colors);
         productSupprimer.addEventListener("click", () => {
-            console.log("vous avez supprimé le item");
+            console.log("vous avez supprimé l'item");
         })
     }
 }
 cartDisplay();
 
 
-
 function getTotals() {
     // Récupération du total des quantités  et du prix total
     let productTotalQuantity = document.getElementById('totalQuantity');
     let productTotalPrice = document.getElementById('totalPrice');
-    if (sectionCarts && sectionCarts.length) {
+    if (sectionCarts && sectionCarts.length) {//-----Additionner toutes les valeurs de la tableau sectionCarts------//
         const totalQuantity = sectionCarts.reduce((acc, sectionCarts) => acc + Number(sectionCarts.quantite), 0)
         productTotalQuantity.textContent = totalQuantity;
 
@@ -138,75 +131,56 @@ const updateQuantity = async (cartDisplay) => {
             event.preventDefault();
             if (event.target.value > 100) event.target.value = 100 //****Une conditin si le quantité plus de 100 alors le quantité =100 *****/
             if (event.target.value < 0) event.target.value = 0 //****Une conditin si le quantité moins de 0 alors le quantité = 0 *****/
-
+            
 
             let quantityArticles = quantityField[q].value; //***Attibution de la valeur de l'input dans "quantityArticles" ***/
-            sectionCarts[q].quantite = quantityArticles; //****Mise àjour de la quantité dans le cart.quantityproduct  ***/
+            sectionCarts[q].quantite = quantityArticles; //****Mise àjour de la quantité dans le sectionCarts[q].quantite  ***/
 
-            localStorage.setItem("cartItems", JSON.stringify(sectionCarts));
+            localStorage.setItem("cartItems", JSON.stringify(sectionCarts));//******Réenregistrement du panier *****/
 
             console.log("quantite++");
             //Refresh rapide de la page
             location.reload();
-
         });
-
     }
 }
-
-
 updateQuantity();
 
-
-
+//Gestion du boutton supprimer de l'article
 const removeProduct = async (cartDisplay) => {
     await cartDisplay
-
-    console.log("remove product");
     let corbeilles = document.querySelectorAll(".deleteItem")
     console.log(corbeilles);
     corbeilles.forEach((corbeille) => {
         corbeille.addEventListener("click", () => {
-            console.log(corbeille);
-
-            let totalsectionCartsRemove = sectionCarts.length;
+            let totalsectionCartsRemove = sectionCarts.length;//---- Le produit va être supprimé en cliquant sur le bouton
             console.log(totalsectionCartsRemove);
             alert("Votre article est bien supprimé")
             if (totalsectionCartsRemove == 1) { //si il y a 1 produit
                 return (localStorage.removeItem('cartItems')),
                     //console.log("remove tout le panier");
                     window.location.href = "cart.html";
-
-
             } else {
-                someProduct = sectionCarts.filter(el => {
+                someProducts = sectionCarts.filter(el => {
                     if (corbeille.dataset.id != el._id || corbeille.dataset.color != el.colors) {
                         return true;
-
                     }
-
                 })
-                console.log(someProduct);
-                localStorage.setItem('cartItems', JSON.stringify(someProduct));
+                console.log(someProducts);
+                localStorage.setItem('cartItems', JSON.stringify(someProducts));
 
                 location.href = "cart.html";
                 console.log(" corbeille remove le produit en question");
-
             }
         });
-
     });
     return;
 };
-
-
 removeProduct();
 
 //**********Instauration formulaire avec regex**********
 function getForm() {
-
     let form = document.querySelector(".cart__order__form");
-
     //Création des expressions régulières
     let addressRegExp = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
     let charRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
@@ -214,30 +188,28 @@ function getForm() {
 
     // Ecouter de la modification du prénom
     form.firstName.addEventListener('change', function() {
-        validFirstName(this);
+        valideFirstName(this);
     });
     // Ecouter de la modification du nom
     form.lastName.addEventListener('change', function() {
-        validLastName(this);
+        valideLastName(this);
     });
     // Ecouter de la modification de l'adresse
     form.address.addEventListener('change', function() {
-        validAddress(this);
+        valideAddress(this);
     });
     // Ecouter de la modification de la ville
     form.city.addEventListener('change', function() {
-        validCity(this);
+        valideCity(this);
     });
     // Ecouter de la modification de l'email
     form.email.addEventListener('change', function() {
-        validEmail(this);
+        valideEmail(this);
     });
 
 
-
-
     // ********* Validation du prénom **********
-    const validFirstName = function(inputFirstName) {
+    const valideFirstName = function(inputFirstName) {
         //Recuperation de la balise firstNameErrorMsg  
         let firstNameErrorMsg = inputFirstName.nextElementSibling;
         //Je test l'expression reguliere
@@ -250,7 +222,7 @@ function getForm() {
         }
     };
     // ********* Validation du nom *********
-    const validLastName = function(inputLastName) {
+    const valideLastName = function(inputLastName) {
         //Recuperation de la balise lastNameErrorMsg  
         let lastNameErrorMsg = inputLastName.nextElementSibling;
         //Je test l'expression reguliere
@@ -263,7 +235,7 @@ function getForm() {
         }
     };
     // ******** Validation de l'adresse ********
-    const validAddress = function(inputAddress) {
+    const valideAddress = function(inputAddress) {
         //Recuperation de la balise addressErrorMsg
         let addressErrorMsg = inputAddress.nextElementSibling;
         //Je test l'expression reguliere
@@ -276,7 +248,7 @@ function getForm() {
         }
     };
     // ********* Validation de la ville ********
-    const validCity = function(inputCity) {
+    const valideCity = function(inputCity) {
         //Recuperation de la balise cityErrorMsg  
         let cityErrorMsg = inputCity.nextElementSibling;
         //Je test l'expression reguliere
@@ -289,7 +261,7 @@ function getForm() {
         }
     };
     // ********** Validation de l'email **********
-    const validEmail = function(inputEmail) {
+    const valideEmail = function(inputEmail) {
         //Recuperation de la balise emailErrorMsg   
         let emailErrorMsg = inputEmail.nextElementSibling;
         //Je test l'expression reguliere
@@ -299,11 +271,8 @@ function getForm() {
         } else {
             emailErrorMsg.innerHTML = 'Veuillez renseigner votre email.';
             return false;
-
         }
-
     };
-
 
     //************Au clic du bouton "commander", enregistre les informations du formulaire, tout en testant si les données sont correctes*********
     document.getElementById("order").addEventListener('click', (e) => {
@@ -324,7 +293,6 @@ function getForm() {
         }
         console.log(products);
         // je mets les valeurs du formulaire(contact) et les produits sélectionnés(products) dans un sendFormData
-
         const sendFormData = {
             contact,
             products,
@@ -337,13 +305,12 @@ function getForm() {
             body: JSON.stringify(sendFormData),
             headers: {
                 'Content-Type': 'application/json',
-
             }
         };
         console.log(options);
 
         //***********Vérifie que toutes les données du formulaire sont correctes et si oui confirme la commande**********
-        if (validFirstName(form.firstName) && validLastName(form.lastName) && validAddress(form.address) && validCity(form.city) && validEmail(form.email)) {
+        if (valideFirstName(form.firstName) && valideLastName(form.lastName) && valideAddress(form.address) && valideCity(form.city) && valideEmail(form.email)) {
             fetch("http://localhost:3000/api/products/order", options)
                 .then(response => response.json())
                 .then(data => {
@@ -357,9 +324,7 @@ function getForm() {
             alert("Le formulaire n'est pas valide");
             return false,
                 console.log();
-
         };
     })
-
 }
 getForm();
