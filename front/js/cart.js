@@ -143,16 +143,16 @@ const updateQuantity = async (cartDisplay) => {
             location.reload();
         });
     }
-}
+} 
 updateQuantity();
 
 //Gestion du boutton supprimer de l'article
 const removeProduct = async (cartDisplay) => {
     await cartDisplay
-    let corbeilles = document.querySelectorAll(".deleteItem")
-    console.log(corbeilles);
-    corbeilles.forEach((corbeille) => {
-        corbeille.addEventListener("click", () => {
+    let deleteItems = document.querySelectorAll(".deleteItem")
+    console.log(deleteItems);
+    deleteItems.forEach((deleteItem) => {
+        deleteItem.addEventListener("click", () => {
             let totalsectionCartsRemove = sectionCarts.length;//---- Le produit va être supprimé en cliquant sur le bouton
             console.log(totalsectionCartsRemove);
             alert("Votre article est bien supprimé")
@@ -162,7 +162,7 @@ const removeProduct = async (cartDisplay) => {
                     window.location.href = "cart.html";
             } else {
                 someProducts = sectionCarts.filter(el => {
-                    if (corbeille.dataset.id != el._id || corbeille.dataset.color != el.colors) {
+                    if (deleteItem.dataset.id != el._id || deleteItem.dataset.color != el.colors) {
                         return true;
                     }
                 })
@@ -170,7 +170,7 @@ const removeProduct = async (cartDisplay) => {
                 localStorage.setItem('cartItems', JSON.stringify(someProducts));
 
                 location.href = "cart.html";
-                console.log(" corbeille remove le produit en question");
+                console.log(" deleteItem remove le produit en question");
             }
         });
     });
