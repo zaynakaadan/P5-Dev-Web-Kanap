@@ -1,6 +1,6 @@
 //Récupère la barre d'adresse sur la fenêtre----
-const productId  = new URL(document.location).searchParams.get("id");
-console.log(productId);
+const productId = new URL(document.location).searchParams.get("id");
+console.log(productId );
 let product= [];
 const fetchproduct = async () => {
     await fetch(`http://localhost:3000/api/products/${productId}`)
@@ -48,76 +48,65 @@ const displayProduct = async () => {
 displayProduct();
 
 const addBasket = () => { //Appeler le fonction
+    //-------------Génération d'ID en hexadécimal pour que le filter ne supprime pas deux même items, même s'ils ont des couleurs différentes----
+    let id = 0;
+    function randomHexId(){
+    id = Math.floor(Math.random()*(1677721500000)).toString(16);
+    return id;
+}
+
+//-----------Fonction de récupération de la couleur, à partir de la couleur sélectionnée dans le Menu déroulant depuis le HTML--------
+
+function productClr() {
+    let select = document.getElementById("colors"); //-----------Récupération du Menu déroulant à partir de son ID------
+    let option = select.options[select.selectedIndex] ; //--------Récupération de la couleur sélectionnée dans le Menu déroulant------
+    return select.selectedIndex !== 0 ? option.text : null ; //------Fin de fonction en attribuant à colorprdt le texte, dans le cas présent on aurait pu récupérer la valeur aussi car elle est identique----
+}
+
+  //----------Fonction de récupération de la valeur à partir de la fonction "quantitynumber" depuis le HTML---------
+
+function quantityNumber() {
+    let qtyNumber = document.getElementById("quantity");
+    return qtyNumber.value;
+}
     let bouton = document.getElementById("addToCart"); //j'ai fait variable bouton qui contein l 'id du produit
     console.log(bouton);
+    //----Au clic du bouton "Ajouter au panier",il exécute les fonctions appeler précédemment ainsi qu'une fonction de sécurité et enfin liste les détails de la commande dans un objet----
+
     //------Ecouter le bouton et envoyer le panier-------
     bouton.addEventListener("click", () => {
-        //----Ajouter l'élément dans le LocalStorage----
-        let productInLocalStorage = JSON.parse(localStorage.getItem('cartItems')); //j'ai vérifié s'il y a quelque chose(clé) dans le local storage
-        let productColors = document.getElementById("colors"); //j'ai récupéré les colors
-        let productQuantity = document.getElementById("quantity"); //j'ai récupéré les quantity
-
-        if (!productColors.value) {
-            alert('Merci de sélectionner une couleur.')
-            return
+        let qtyNumber = parseInt(quantityNumber()); //------Convertie du texte en nombre entier------
+        let colorprdt = productClr();
+        let idDeletion = randomHexId();//------Exécute la fonction qui génère un ID en hexadecimal----
+        let cartItem = {
+        color: colorprdt,
+        productIdSelection:productId,
+        quantityProduct: qtyNumber,
+        idDeletion : idDeletion, //----Attribution de l'ID de suppression----
+    }
+console.log(cartItem);
+//---------Détection de doublon dans la panier à partir de la couleur et de l'ID et les cumule s'il en trouve------ 
+if(qtyNumber < 0){
+    alert("Veuillez ne pas mettre une quantité négative")
+}
+    else{
+    if(colorprdt && qtyNumber){
+        const localStorage = window.localStorage 
+        const cartItems = JSON.parse(localStorage.getItem("cartItems")) || []
+        if(cartItems.some(item=>item.productIdSelection === cartItem.productIdSelection) && cartItems.some(item=>item.color === cartItem.color)){ //------on verifie l'existence du cartitem qu'on va ajouter dans le localstorage si oui on incremente sont prix , son total et sa quantité sinon on l'ajoute au localstorage normalement
+        const itemToAdd = cartItems.find(item=>item.productIdSelection===cartItem.productIdSelection)
+        itemToAdd.quantityProduct+=cartItem.quantityProduct
+        cartItems.splice(cartItems.map(item=>item.productIdSelection).indexOf(cartItem.productIdSelection),1,itemToAdd)
+        localStorage.setItem("cartItems",JSON.stringify(cartItems))
         }
-        if (isNaN(productQuantity.value) || !(productQuantity.value > 0 && productQuantity.value < 101)) {
-            alert('Merci de sélectionner une quantité correcte.')
-            return
+        else{
+        localStorage.setItem("cartItems",JSON.stringify(cartItems.concat(cartItem)))
         }
-        console.log(productColors.value);
-        console.log(productQuantity.value);
-        
-        const productWithColorsAndQuantity = Object.assign({}, product, { //ajouter le valeur avec un methode assign qui permet d'assigner quelque chose à un objet (qui existe déja) et de rajouter des valeurs des éléments dans cet objet dans ce tableau d'objets
-            colors: `${productColors.value}`, //créé un nouvel objet pour ajouter ce qu'on veut comme valeur la color et quantite 
-            quantite: Number(`${productQuantity.value}`),
-        });
-        console.log(productWithColorsAndQuantity);
-
-        if (productInLocalStorage == null) { //j'ai fait un condition si le productinlocalstorage est null le productinlocalstorage ça sera un tableau vide
-            productInLocalStorage = [];
-            alert("L'article(s) a bien été ajouté à votre panier"),
-            productInLocalStorage.push(productWithColorsAndQuantity);
-
-            console.log(productInLocalStorage); // on vas le trouver dans un tableau
-
-            localStorage.setItem('cartItems', JSON.stringify(productInLocalStorage)); //pour faire un cartitems dans local storage et avec methode stringify il vas transormer le produitinlocalstorage en string pour le stocker dans mon local storage
-            productInLocalStorage = JSON.parse(localStorage.getItem("cartItems"));
-
-        } else if (productInLocalStorage != null) {
-            for (i = 0; i < productInLocalStorage.length; i++) {
-                console.log("test");
-                if (
-                    productInLocalStorage[i]._id == product._id && //la meme id 
-                    productInLocalStorage[i].colors == product.value
-                ) {
-                    return (
-                        productInLocalStorage[i].quantite++,
-                        console.log("quantite++"),
-                        localStorage.setItem("cartItems", JSON.stringify(productInLocalStorage)),
-                        alert("L'article(s) a bien été ajouté à votre panier"),
-                        productInLocalStorage = JSON.parse(localStorage.getItem("cartItems"))
-                    );
-                }
-            }
-            for (i = 0; i < productInLocalStorage.length; i++) {
-                if (
-                    productInLocalStorage[i]._id == product._id &&
-                    productInLocalStorage[i].colors != product.value ||
-                    productInLocalStorage[i]._id != product._id //nouveu id
-                ) {
-                    return (
-                        console.log("new"),
-                        productInLocalStorage.push(productWithColorsAndQuantity), //pousser un nouvel objet qui jel'ai crée 
-                        localStorage.setItem('cartItems', JSON.stringify(productInLocalStorage)),
-                        alert("L'article(s) a bien été ajouté à votre panier"),
-
-                        productInLocalStorage = JSON.parse(localStorage.getItem("cartItems"))
-                    )
-                }
-            }
-        }
-    });
-    return (productInLocalStorage = JSON.parse(localStorage.getItem("cartItems"))
-    );
+    alert("Produit(s) ajouté(s) au panier");
+    }
+    else{
+    alert("Veuillez ajouter une couleur et une quantitée")
+    }
+}
+});
 };
